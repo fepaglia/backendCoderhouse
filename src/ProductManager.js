@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from "fs";
 
 class ProductManager {
     constructor(){
@@ -11,7 +11,6 @@ class ProductManager {
 
         //Si no existe la ruta, se creara el archivo con un [] vacio.
         if(!fs.existsSync(this.path)) {
-            console.log(`El archivo ${this.path} no existe, aguarde instante.`);
             await fs.promises.writeFile(this.path, JSON.stringify([]))
                 .then((res)=> console.log(`< ${this.path} > fue creado.`))
                 .catch((err) => console.log("Hubo un Problema al crear el archivo. No fue Posible."));
@@ -20,9 +19,11 @@ class ProductManager {
         try {
             const rawdata = await fs.promises.readFile(this.path, 'utf-8')
             const data = JSON.parse(rawdata, null, "\n")
-            return data;    
+            return data, console.log(data);
+            
+           
         } catch (error) {
-            throw new Error("El archivo no existe, o esta danado")
+            console.log(error)
         }
     }
 
@@ -34,6 +35,7 @@ class ProductManager {
             product.id = 0;
         } else {
             product.id = data[data.length -1].id +1;
+            return product
         }    
     }
 // Funcion que agrega un producto:
@@ -70,67 +72,79 @@ class ProductManager {
             const rawdata = await fs.promises.readFile(this.path, 'utf-8')
             let data = JSON.parse(rawdata).find(prod => prod.id === id)
             if (!data){
-                return console.log("Not found");
+                throw new Error("Not found")
             }else {
-                return data
+                return data, console.log(data);
             }
         } catch (error) {
-            throw new Error('Se produjo un error')
+            return error.message
         }
     }
 //Actualiza informacion de un producto especifico:
-    updateProduct = async(id, updateObj) => {
-        try {
-            let oldProd = await getProducts()
+updateProduct = async(id, updateObj) => {
+    try {
+        if (!id) {
+            throw new Error ("No esxiste el producto con ese id")
+        }
+            
+            let rawdata = await fs.promises.readFile(this.path, 'utf-8');
+            let oldProd = JSON.parse(rawdata, null, "\n")
             const productoIndex = oldProd.findIndex((prod)=> prod.id === id);
+            if (productoIndex === id) {
+                throw new Error(`No se encontró el producto con id ${id}`);
+            }
             const newData= {
                 ...updateObj,
                 id
             }
             oldProd[productoIndex] = newData;
             await fs.promises.writeFile(this.path ,JSON.stringify(oldProd, null, '\t'));
-            console.log(`El producto con el id ${id} se actualizo correctamente.`);
-            
-        } catch (error) {
-            throw new Error(error);
-        }
+    } catch (error) {
+       return error.message
     }
+}
 // Eliminamos un producto, con un id especifico:
-    deleteProduct = async(id)=>{
-        try { 
-            //Leemos el archivo, lo filtramos y luego volvemos a reescribir:
-            const rawdata = await fs.promises.readFile(this.path, 'utf-8')
-            let data = JSON.parse(rawdata).filter(producto => producto.id !== id)
-            await fs.promises.writeFile(this.path, JSON.stringify(data, null, "\t"));
-            return console.log("Se elimino correctamente")
-                    
-        } catch (error) {
-            throw new Error(error)
-        }
+deleteProduct = async(id)=>{
+    try { 
+        if (!id) {
+            throw new Error("ID inválido")
+        } 
+        const rawdata = await fs.promises.readFile(this.path, 'utf-8')
+        let data = JSON.parse(rawdata).filter(producto => producto.id !== id);
+
+        await fs.promises.writeFile(this.path, JSON.stringify(data, null, "\t"));
+        return console.log("Producto eliminado correctamente");    
+    } catch (error) {
+        return error.message
     }
+}
 }
 
 // Creamos la instancia de la clase
-const { getProducts, addProduct, getProductsById, updateProduct, deleteProduct } = new ProductManager();
-
+const productManager = new ProductManager();
 
 //Devuelve la lista de productos. De no existir el archivo crea uno vacio.
-//getProducts();
+productManager.getProducts();
 
-//addProduct("producto prueba","este es un producto prueba", 1000, "sin imagen", "code123", 25); //Agregamos el producto
-//addProduct("producto prueba2","este es un producto prueba", 1000, "sin imagen", "code123", 25); // Agregamos producto con el mismo campo code, debe retornar error
-//addProduct("producto prueba3","este es un producto prueba", 1000, "sin imagen", "code12345556", 25) //Agregamos un producto con distinto campo code, debe agregarlo sin problemas, con el id incrementado
+//Agregamos productos de a uno por vez:
 
-//addProduct("prod6","este es un producto prueba", 1000, "sin imagen", "codeerr", 25)
+//productManager.addProduct("producto prueba1","este es un producto prueba", 1000, "sin imagen", "code123", 25); 
+//productManager.addProduct("producto prueba2","este es un producto prueba", 1000, "sin imagen", "code1234", 25); 
+//productManager.addProduct("producto prueba3","este es un producto prueba", 1000, "sin imagen", "code12345", 25);
 
-//deleteProduct();
-//getProductsById() //Encuentra el producto
+//Encuentra el producto
+productManager.getProductsById() 
 
-/*updateProduct(2,newData ={
+//Actualiza el producto
+productManager.updateProduct(2 ,{
     title: "nuevo producto",
     description: "probando Cambios",
     price: 550,
     thumbail: "sin imagen",
     code: "updateFunction",
     stock: 1
-   });*/
+   });
+
+
+//Elimina el producto
+productManager.deleteProduct();
