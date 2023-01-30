@@ -35,7 +35,7 @@ class ProductManager {
             product.id = 0;
         } else {
             product.id = data[data.length -1].id +1;
-            return product
+            return product;
         }    
     }
 // Funcion que agrega un producto:
@@ -77,7 +77,7 @@ class ProductManager {
                 return data, console.log(data);
             }
         } catch (error) {
-            return error.message
+            return error.message;
         }
     }
 //Actualiza informacion de un producto especifico:
@@ -100,7 +100,7 @@ updateProduct = async(id, updateObj) => {
             oldProd[productoIndex] = newData;
             await fs.promises.writeFile(this.path ,JSON.stringify(oldProd, null, '\t'));
     } catch (error) {
-       return error.message
+       return error.message;
     }
 }
 // Eliminamos un producto, con un id especifico:
