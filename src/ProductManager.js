@@ -1,6 +1,6 @@
 import fs from "fs";
 
-class ProductManager {
+export default class ProductManager {
     constructor(){
         this.products = [];
         this.path = './Productos.json' // Ruta al archivo donde queremos grabar los datos.
@@ -19,7 +19,7 @@ class ProductManager {
         try {
             const rawdata = await fs.promises.readFile(this.path, 'utf-8')
             const data = JSON.parse(rawdata, null, "\n")
-            return data, console.log(data);
+            return data;
             
            
         } catch (error) {
@@ -74,7 +74,7 @@ class ProductManager {
             if (!data){
                 throw new Error("Not found")
             }else {
-                return data, console.log(data);
+                return data;
             }
         } catch (error) {
             return error.message;
@@ -124,27 +124,36 @@ deleteProduct = async(id)=>{
 const productManager = new ProductManager();
 
 //Devuelve la lista de productos. De no existir el archivo crea uno vacio.
-productManager.getProducts();
+//productManager.getProducts();
 
 //Agregamos productos de a uno por vez:
 
-//productManager.addProduct("producto prueba1","este es un producto prueba", 1000, "sin imagen", "code123", 25); 
-//productManager.addProduct("producto prueba2","este es un producto prueba", 1000, "sin imagen", "code1234", 25); 
-//productManager.addProduct("producto prueba3","este es un producto prueba", 1000, "sin imagen", "code12345", 25);
+//productManager.addProduct("Gaseosa","botella plastica 2lts", 500, "sin imagen", "bebidacola", 24); 
+//productManager.addProduct("Agua con gas","botella de vidrio 1.5lts", 350, "sin imagen", "aguasingas", 18); 
+//productManager.addProduct("Cerveza Quilmes","lata 473ml", 220, "sin imagen", "quilmeslata", 12);
+//productManager.addProduct("Vino","tinto o blanco", 1000, "sin imagen", "vino750ml", 24);
+//productManager.addProduct("Leche Entera","1litro en carton", 300, "sin imagen", "lecheentera", 12);
+//productManager.addProduct("Leche descremada","sachet de 1lt", 310, "sin imagen", "lechedesc", 12);
+//productManager.addProduct("Terma","hierbas serranas", 600, "sin imagen", "termaserranas", 16);
+//productManager.addProduct("Chocolatada","carton de 1lt", 450, "sin imagen", "chocolatada", 12);
+//productManager.addProduct("Yogurt","varios sabores", 450, "sin imagen", "yogurt", 12);
+//productManager.addProduct("Agua saborizada","varios sabores", 480, "sin imagen", "aguasaborizada", 25);
+//productManager.addProduct("Champagne","importado 750ml", 1000, "sin imagen", "champagne", 6);
+//productManager.addProduct("Fernet","este es un producto prueba", 1800, "sin imagen", "fernet", 6);
 
 //Encuentra el producto
-productManager.getProductsById() 
+//productManager.getProductsById() 
 
 //Actualiza el producto
-productManager.updateProduct(2 ,{
+/*productManager.updateProduct(2 ,{
     title: "nuevo producto",
     description: "probando Cambios",
     price: 550,
     thumbail: "sin imagen",
     code: "updateFunction",
     stock: 1
-   });
+   });*/
 
 
 //Elimina el producto
-productManager.deleteProduct();
+//productManager.deleteProduct();
