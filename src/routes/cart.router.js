@@ -1,17 +1,21 @@
 import { Router } from 'express';
+import CartManager from '../CartManager.js';
+
+const cartManager = new CartManager();
 
 const router = Router();
 
-router.get(
-    //La ruta GET /:cid deberá listar los productos que pertenezcan al carrito con el parámetro cid proporcionados.
+router.post('/', (req, res) =>{
+    const newCart = cartManager.createNewCart();
+})
 
-);
 
-router.post(
-    //La ruta POST  /:cid/product/:pid deberá agregar el producto al arreglo 
-    //“products” del carrito seleccionado, agregándose como un objeto 
 
-)
-
+ router.post('/product/:pid', async (req, res) =>{
+    const newOrder = Number(req.params.pid);
+    await cartManager.addToCart(newOrder);
+    res.send(newOrder)
+  
+})
 
 export default router;

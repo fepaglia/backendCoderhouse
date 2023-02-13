@@ -9,24 +9,6 @@
 		"id": 0
 	},
 	{
-		"title": "Agua con gas",
-		"description": "botella de vidrio 1.5lts",
-		"price": 350,
-		"thumbail": "sin imagen",
-		"code": "aguasingas",
-		"stock": 18,
-		"id": 1
-	},
-	{
-		"title": "Cerveza Quilmes",
-		"description": "lata 473ml",
-		"price": 220,
-		"thumbail": "sin imagen",
-		"code": "quilmeslata",
-		"stock": 12,
-		"id": 2
-	},
-	{
 		"title": "Vino",
 		"description": "tinto o blanco",
 		"price": 1000,
