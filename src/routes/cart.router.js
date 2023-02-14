@@ -5,17 +5,23 @@ const cartManager = new CartManager();
 
 const router = Router();
 
-router.post('/', (req, res) =>{
-    const newCart = cartManager.createNewCart();
+//Peticiones
+ router.post('/:cid/product/:pid', async (req, res) =>{
+    const cartId = Number(req.params.cid);
+    const addProd = Number(req.params.pid);
+    await cartManager.addProdToCart(cartId, addProd, 1);
+    res.status(200).send( cartManager.getCartById(cartId) )
 })
 
+// router.post('/', (req, res) =>{
+//     const newCart = cartManager.createNewCart();
+// })
 
-
- router.post('/product/:pid', async (req, res) =>{
-    const newOrder = Number(req.params.pid);
-    await cartManager.addToCart(newOrder);
-    res.send(newOrder)
-  
+router.get('/:cid', async (req, res) =>{
+    const cartId = Number(req.params.cid);
+    const cart = await cartManager.getCartById(cartId);
+    res.status(200).send({cart})
 })
+
 
 export default router;
