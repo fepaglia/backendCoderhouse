@@ -1,21 +1,24 @@
 import { Router } from 'express';
 import CartManager from '../CartManager.js';
-
+import ProductManager from '../ProductManager.js';
 const cartManager = new CartManager();
+const productManager = new ProductManager();
 
 const router = Router();
 
 //Peticiones
  router.post('/:cid/product/:pid', async (req, res) =>{
-    const cartId = Number(req.params.cid);
-    const addProd = Number(req.params.pid);
-    await cartManager.addProdToCart(cartId, addProd, 1);
-    res.status(200).send( cartManager.getCartById(cartId) )
+    const cid = Number(req.params.cid);
+    const pid = await productManager.getProductsById(Number(req.params.pid));
+    
+    await cartManager.addProdToCart(cid, pid);
+    res.status(200).send()
 })
 
-// router.post('/', (req, res) =>{
-//     const newCart = cartManager.createNewCart();
-// })
+router.post('/', async (req, res) =>{
+    await cartManager.createNewCart();
+    res.status(200).send()
+})
 
 router.get('/:cid', async (req, res) =>{
     const cartId = Number(req.params.cid);

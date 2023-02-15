@@ -1,49 +1,38 @@
-import fs from 'fs';
-import ProductManager from './ProductManager.js';
-
-const productManager = new ProductManager();
+import utils from './utility.js';
 
 export default class CartManager {
     constructor(){
         this.cartPath = './src/Cart.json';
-      
+        this.newCart = {products: []}
     }
 
-    // createNewCart = async() =>{
-    //     const rawdata = await fs.promises.readFile(this.cartPath, 'utf-8')
-    //         const data = JSON.parse(rawdata, null, "\n")
-
-    //         productManager.addID(this.newOrder);
-
-    //         return data
-    // }
-
-    getCartById = async(cid) =>{
+    createNewCart = async() =>{
+        const carts = await utils.readFile(this.cartPath);
         try {
-            const rawdata = await fs.promises.readFile(this.cartPath, 'utf-8')
-            let data = JSON.parse(rawdata).find(carts => carts.cid === cid)
-            if (!data){
-                throw new Error("Not found")
-            }else {
-                return data.products;
-            }
-        } 
-        catch (error) {
-            return error.message;
+            const newCart = await utils.addID(this.newCart, this.cartPath);
+            carts.push(newCart)
+           return  await utils.writeFile(this.cartPath, carts);
+        } catch (error) {
+            console.log(error);
         }
     }
 
-    addProdToCart = async(cid, pid, qtyItem) =>{
-        const cart = await this.getCartById(cid)
-        const addToCart = await productManager.getProductsById(pid);
-        const addProd = {
-            pid: addToCart.id,
-            quantity: qtyItem,
-       }
-        cart.push(addProd)
-
-       console.log(cart)
+    getCartById = (cid) =>{
+        return utils.searchByID(this.cartPath, cid);
     }
 
+    addProdToCart = async(cid, pid) =>{
+        const carts = await utils.readFile(this.cartPath);
+        const cartToMod = carts.findIndex(cart=> cart.id === cid);
+        const prodToCart = {...pid,id}
+        console.log(cartToMod);
+        const cart = await this.getCartById(cid);
+        console.log(pid)
+        if (!cart){
+            throw new Error(`No se encontró la orden de con id ${cartID}`);
+        }
+        //return cart.products.push(prodID);           
+        await utils.writeFile(this.cartPath, cart);
+    }
 }
 

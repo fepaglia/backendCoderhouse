@@ -1,13 +1,12 @@
 import fs from "fs";
+import utils from "./utility.js"
 
 export default class ProductManager {
     constructor(){
         this.path = './src/Productos.json' // Ruta al archivo donde queremos grabar los datos.
     }
 
-//Llama a todos los productos que tengamos, o crea el archivo:
     getProducts = async() =>{
-
         //Si no existe la ruta, se creara el archivo con un [] vacio.
         if(!fs.existsSync(this.path)) {
             await fs.promises.writeFile(this.path, JSON.stringify([]))
@@ -15,111 +14,76 @@ export default class ProductManager {
                 .catch((err) => console.log("Hubo un Problema al crear el archivo. No fue Posible."));
             }
         try {
-            const rawdata = await fs.promises.readFile(this.path, 'utf-8')
-            const data = JSON.parse(rawdata, null, "\n")
-            return data;
-        } catch (error) {
+            return utils.readFile(this.path);   
+        }
+        catch (error) {
             console.log(error)
         }
     }
 
-// Agrega un id, que se incrementa de forma dinamica:
-    addID = async(product) =>{
-        const rawdata = await fs.promises.readFile(this.path, 'utf-8')
-        const data = JSON.parse(rawdata, null, "\n")
-        if (data.length === 0){
-            product.id = 0;
-        } else {
-            product.id = data[data.length -1].id +1;
-            return product;
-        }    
+    addProdID = (newProduct) =>{
+      return utils.addID(newProduct, this.path);
     }
-// Funcion que agrega un producto:
+
     addProduct = async ({title, description, price, status =true, thumbnail, code, stock}) =>{
-        let rawdata = await fs.promises.readFile(this.path, 'utf-8');
-        let data = JSON.parse(rawdata, null, "\n");
-        const product = {
-            title,
-            description,
-            price,
-            status,
-            thumbnail,
-            code,
-            stock
-        }
-
+        const newProduct = {title,description,price,status,thumbnail,code,stock};       
     //Validaciones:
-        //if (!title || !description || !price || !status || !thumbnail || !code || !stock) {
-        //     return console.error(`Complete todos los campos, por favor.`);
-        //};
-
+        if (!newProduct.title || !newProduct.description || !newProduct.price || !newProduct.status || !newProduct.thumbnail || !newProduct.code || !newProduct.stock) {
+            console.error(`Complete todos los campos, por favor.`);
+        };
+        const data = await utils.readFile(this.path);
         // No deben repetirse productos con el mismo campo: code
-        if (data.find(prod => prod.code === product.code)) {
-            return console.error(`El producto con el code: ${product.code} ya existe:`);
+        if (data.find(prod => prod.code === newProduct.code)) {
+            return console.error(`El producto con el code: ${newProduct.code} ya existe:`);
         }; 
-
-        //agregamos el Id Dinamico:
-        await this.addID(product);
-
-        await data.push(product);
-        let prodtoArray = data;
-
-        // Una vez cargados, los datos al array de productos. Lo escribimos en el archivo:
-        await fs.promises.writeFile(this.path, JSON.stringify(prodtoArray, null, '\t'))
-            .then(()=> {return console.log(`Se agrego ${product.title} sin problemas`)})
-            .catch(err => console.log(err))   
-    }
-// Buscamos el producto con un id especifico. Si existe lo retorna por consola.
-    getProductsById = async(id) =>{
         try {
-            const rawdata = await fs.promises.readFile(this.path, 'utf-8')
-            let data = JSON.parse(rawdata).find(prod => prod.id === id)
-            if (!data){
-                throw new Error("Not found")
-            }else {
-                return data;
-            }
+            //agregamos el Id Dinamico:
+            await this.addProdID(newProduct)
+            await data.push(newProduct);
+            // Una vez cargados, los datos al array de productos. reescribimos el archivo:
+            utils.writeFile(this.path, data)
         } catch (error) {
-            return error.message;
+            console.log(error);
         }
     }
-//Actualiza informacion de un producto especifico:
+
+    getProductsById = (id) =>{
+      return utils.searchByID(this.path, id);
+    }
+
     updateProduct = async(id, updateObj) => {
         try {
             if (!id) {
                 throw new Error ("No esxiste el producto con ese id")
-            }
-                
-            let rawdata = await fs.promises.readFile(this.path, 'utf-8');
-            let oldProd = JSON.parse(rawdata, null, "\n")
-            const productoIndex = oldProd.findIndex((prod)=> prod.id === id);
+            }   
+            const oldProd = await utils.readFile(this.path);
+            const productoIndex = oldProd.findIndex(prod=> prod.id === id);
                 if (productoIndex === id) {
                     throw new Error(`No se encontró el producto con id ${id}`);
                 }
-                if (!updateObj.title || !updateObj.description || !updateObj.price || !updateObj.thumbail || !updateObj.code || !updateObj.stock) {
+                if (!updateObj.title || !updateObj.description || !updateObj.price || !updateObj.status || !updateObj.thumbail || !updateObj.code || !updateObj.stock) {
                 return console.error(`Complete todos los campos, por favor.`);}
             
             const newData= {
                 ...updateObj,
                 id
             }
-                oldProd[productoIndex] = newData;
-                await fs.promises.writeFile(this.path ,JSON.stringify(oldProd, null, '\t'));
+            oldProd[productoIndex] = newData;
+            await utils.writeFile(this.path, oldProd);
         } catch (error) {
         return error.message;
         }
     }
-// Eliminamos un producto, con un id especifico:
+
     deleteProduct = async(id)=>{
         try { 
             if (!id) {
                 throw new Error("ID inválido")
             } 
-            const rawdata = await fs.promises.readFile(this.path, 'utf-8')
-            let data = JSON.parse(rawdata).filter(producto => producto.id !== id);
+            const products = await utils.readFile(this.path);
+            const prod = products.filter(producto => producto.id !== id);
 
-            await fs.promises.writeFile(this.path, JSON.stringify(data, null, "\t"));
-            return console.log("Producto eliminado correctamente");    
+            return utils.writeFile(this.path, prod);   
         } catch (error) {
             return error.message
         }
