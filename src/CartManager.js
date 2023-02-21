@@ -22,17 +22,17 @@ export default class CartManager {
     }
 
     addProdToCart = async(cid, pid) =>{
-        const carts = await utils.readFile(this.cartPath);
-        const cartToMod = carts.findIndex(cart=> cart.id === cid);
-        const prodToCart = {...pid,id}
-        console.log(cartToMod);
-        const cart = await this.getCartById(cid);
-        console.log(pid)
-        if (!cart){
-            throw new Error(`No se encontró la orden de con id ${cartID}`);
-        }
-        //return cart.products.push(prodID);           
-        await utils.writeFile(this.cartPath, cart);
+        // const carts = await utils.readFile(this.cartPath);
+        // const cartToMod = carts.findIndex(cart=> cart.id === cid);
+        // const prodToCart = {...pid,id}
+        // console.log(cartToMod);
+        // const cart = await this.getCartById(cid);
+        // console.log(pid)
+        // if (!cart){
+        //     throw new Error(`No se encontró la orden de con id ${cartID}`);
+        // }
+        // //return cart.products.push(prodID);           
+        // await utils.writeFile(this.cartPath, cart);
     }
 }
 

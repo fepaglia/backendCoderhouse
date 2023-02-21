@@ -1,5 +1,5 @@
 import fs from "fs";
-import utils from "./utility.js"
+import utils from "./utility.js";
 
 export default class ProductManager {
     constructor(){

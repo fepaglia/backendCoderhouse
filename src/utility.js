@@ -1,4 +1,10 @@
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+//Path absoluto:
+const __filename = fileURLToPath(import.meta.url);
+export const __dirname = dirname(__filename);
 
 //Lectura del archivo .JSON y parseo a OBJ de Js:
 const readFile = async (path) =>{
@@ -35,4 +41,4 @@ const addID = async (item, path) =>{
     }    
 }
 
-export default {readFile, writeFile, searchByID, addID};
+export default {readFile, writeFile, searchByID, addID, __dirname};

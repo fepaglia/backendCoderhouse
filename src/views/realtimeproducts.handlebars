@@ -1,0 +1,59 @@
+ <p>Socket.io andando en tiempo real: Mostrando productos</p>
+<div style="display: flex; flex-flow: nowrap row;">
+    <div>
+        <h2>Productos</h2>
+        {{#each products}}
+            <div><span>ID: </span><p>{{id}}</p></div>
+            <div><span>Nombre: </span><p>{{title}}</p></div>
+            <div><span>Precio: </span><p>{{price}}</p></div>
+            <div><span>Descripcion: </span><p>{{description}}</p></div>
+            <div><span>Thumbnails: </span><p>{{thumbnails}}</p></div>
+            <div><span>Status: </span><p>{{status}}</p></div>
+            <div><span>Stock: </span><p>{{stock}}</p></div>
+            <br>
+            <button id="eliminar" onclick="()=> {botonEliminar(${{id}})}">Eliminar</button>
+        {{/each}}
+    </div>
+
+    <div>
+        <p>Agregar productos:</p>
+        <form>
+            <fieldset>
+                <legend>Complete los campos:</legend>
+                <p>
+                <input id="title" type="text">
+                <label for="title">Title</label>
+                </p>
+                <p>
+                <input type="text" id="description">
+                <label for="description">Description</label>
+                </p>
+                <p>
+                <input type="number" id="price">
+                <label for="price">Price</label>
+                </p>
+                <p>
+                <input type="text" id="code">
+                <label for="code">Code</label>
+                </p>
+                <p>
+                <input type="text" id="thumbnails">
+                <label for="thumbnails">Thumbnails</label>
+                </p>
+                <p>
+                <input type="text" id="stock">
+                <label for="stock">Stock</label>
+                </p>
+                 <p>
+                <input type="text" id="status">
+                <label for="status">Status</label>
+                </p>
+
+                <button type="submit" onclick="addProdcut()">Agregar al catalogo!</button>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<scripts src="/socket.io/socket.io.js"></scripts>
+<scripts src="../public/js/index.js"></scripts>
+
